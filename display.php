@@ -26,15 +26,12 @@ if ($_REQUEST["page"] == NULL) {
 } else {
   $page_num = $_REQUEST["page"];
 }
-// var_dump($page_num - 1);
+
 $num_per_page = 50;
 
 $get_stmt = $pdo->prepare("SELECT * FROM jlh_papers LIMIT ?, $num_per_page");
 $get_stmt->execute([($page_num - 1) * $num_per_page]);
-// $get_stmt = $pdo->prepare('SELECT * FROM jlh_papers LIMIT 0, 50');
-// $get_stmt->execute();
 $rows = $get_stmt->fetchAll();
-// var_dump($rows);
 ?>
 <html>
 
@@ -57,9 +54,10 @@ $rows = $get_stmt->fetchAll();
     <?php foreach ($rows as $db_row) {
       $id = $db_row["id"];
       $image_path = $db_row["image_path"];
+      $img_tag = "<img src=\"$image_path\" height=\"128\">";
       $page_text = $db_row["page_text"];
       $img_text = $db_row["img_text"];
-      $html_row = "<tr><td>$id</td><td>$image_path</td><td>$page_text</td><td>$img_text</td></tr>";
+      $html_row = "<tr><td>$id</td><td>$img_tag</td><td>$page_text</td><td>$img_text</td></tr>";
       echo $html_row;
     }
     ?>
