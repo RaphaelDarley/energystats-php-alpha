@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 
 <?php
+include_once 'utils.php';
+
 $host = 'localhost';
 $db   = 'energystats';
 $user = 'energystats';
@@ -19,18 +21,26 @@ try {
   throw new \PDOException($e->getMessage(), (int)$e->getCode());
 }
 
-// var_dump($_REQUEST["page"]);
 
-if ($_REQUEST["page"] == NULL) {
-  $page_num = 1;
-} else {
-  $page_num = $_REQUEST["page"];
-}
+$page_num = default_val($_REQUEST["page"], 1);
 
 $num_per_page = 50;
+// var_dump($_REQUEST);
+// var_dump($_REQUEST["search"]);
 
-$get_stmt = $pdo->prepare("SELECT * FROM jlh_papers LIMIT ?, $num_per_page");
-$get_stmt->execute([($page_num - 1) * $num_per_page]);
+
+if ($_REQUEST["search"] == NULL) {
+  $get_stmt = $pdo->prepare("SELECT * FROM jlh_papers LIMIT ?, $num_per_page");
+  $get_stmt->execute([($page_num - 1) * $num_per_page]);
+} else {
+  $start = ($page_num - 1) * $num_per_page;
+  $search_term = $_REQUEST["search"];
+  $get_stmt = $pdo->prepare("SELECT * FROM jlh_papers WHERE (page_text LIKE '%$search_term%') LIMIT ?, $num_per_page");
+  // $get_stmt->debugDumpParams();
+
+  $get_stmt->execute([$start]);
+}
+
 $rows = $get_stmt->fetchAll();
 ?>
 <html>
@@ -40,10 +50,18 @@ $rows = $get_stmt->fetchAll();
 </head>
 
 <body>
-  <a href="?page=<?php echo $page_num - 1 ?>" <?php if ($page_num < 2) {
-                                                echo 'style="pointer-events: none"';
-                                              } ?>>Previous</a>
-  <a href="?page=<?php echo $page_num + 1 ?>">Next</a>
+  <a href="?page=<?php echo $page_num - 1 ?><?php if ($_REQUEST["search"] != NULL) {
+                                              echo "&search=" . $_REQUEST["search"];
+                                            } ?>" <?php if ($page_num < 2) {
+                                                    echo 'style="pointer-events: none"';
+                                                  } ?>>Previous</a>
+  <a href="?page=<?php echo $page_num + 1 ?><?php if ($_REQUEST["search"] != NULL) {
+                                              echo "&search=" . $_REQUEST["search"];
+                                            } ?>">Next</a>
+  <form method="get">
+    <input type="text" name="search">
+    <button type="submit">submit</button>
+  </form>
   <table>
     <tr>
       <td>ID</td>
