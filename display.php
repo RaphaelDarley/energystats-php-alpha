@@ -72,7 +72,7 @@ $rows = $get_stmt->fetchAll();
     <?php foreach ($rows as $db_row) {
       $id = $db_row["id"];
       $image_path = $db_row["image_path"];
-      $img_tag = "<img src=\"$image_path\" height=\"128\">";
+      $img_tag = "<img src=\"$image_path\" width=\"512\">";
       $page_text = $db_row["page_text"];
       $img_text = $db_row["img_text"];
       $html_row = "<tr><td>$id</td><td>$img_tag</td><td>$page_text</td><td>$img_text</td></tr>";
