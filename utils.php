@@ -7,3 +7,8 @@ function default_val($value, $default)
         return $value;
     }
 }
+
+function search_term_to_like($term)
+{
+    return "page_text LIKE '%$term%'";
+}
