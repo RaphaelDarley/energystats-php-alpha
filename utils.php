@@ -8,9 +8,14 @@ function default_val($value, $default)
     }
 }
 
-function search_term_to_like($term)
+function search_term_to_like_page($term)
 {
     return "page_text LIKE '%$term%'";
+}
+
+function search_term_to_like_img($term)
+{
+    return "img_text LIKE '%$term%'";
 }
 
 function persist_value_default($value, $default)

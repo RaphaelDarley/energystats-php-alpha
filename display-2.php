@@ -12,12 +12,18 @@ $img_size = default_val($_REQUEST["img_size"], $default_img_size);
 
 
 
+
 if ($_REQUEST["search"] != NULL) {
     $request_search = $_REQUEST["search"];
     $search_arr = explode(" & ", $request_search);
     print_r($search_arr);
 
-    $where_stmt = join(" AND ", array_map("search_term_to_like", $search_arr));
+    if ($_REQUEST["graph_text_search"]) {
+        $where_stmt = join(" AND ", array_map("search_term_to_like_img", $search_arr));
+    } else {
+        $where_stmt = join(" AND ", array_map("search_term_to_like_page", $search_arr));
+    }
+
 
     if ($_REQUEST["year"] != NULL) {
         $year = $_REQUEST["year"];
@@ -82,6 +88,10 @@ $rows = $get_stmt->fetchAll();
 
         <label for="show_text">Show text:</label>
         <input type="checkbox" name="show_text" <?php persist_checked($_REQUEST["show_text"]) ?>>
+
+        <label for="graph_text_search">Seach graph text:</label>
+        <input type="checkbox" name="graph_text_search" <?php persist_checked($_REQUEST["graph_text_search"]) ?>>
+
         <button type="submit">submit</button>
     </form>
     <form method="get"><button type="submit">clear</button></form>
